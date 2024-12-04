@@ -5,7 +5,7 @@ import YouTube from "react-youtube";
 export default function Home() {
   const [videoId, setVideoId] = useState("");
   const [startTime, setStartTime] = useState(0);
-  const [endTime, setEndTime] = useState(0);
+  const [endTime, setEndTime] = useState(30);
   const [loop, setLoop] = useState(false);
   const playerRef = useRef(null);
 
@@ -33,10 +33,10 @@ export default function Home() {
   };
 
   const onPlayerStateChange = (event) => {
-    if (event.data === 1 && loop) { // When video is playing
+    if (event.data === 1 && loop) {
+      // When video is playing
       const currentTime = playerRef.current.getCurrentTime();
       if (currentTime >= endTime) {
-        console.log(startTime, endTime, currentTime);
         playerRef.current.seekTo(startTime);
       }
     }
@@ -58,13 +58,13 @@ export default function Home() {
           type='number'
           placeholder='Start Time (in Minutes)'
           className='border p-2 rounded'
-          onChange={(e) => setStartTime(Number(e.target.value)*60)}
+          onChange={(e) => setStartTime(Number(e.target.value * 60))}
         />
         <input
           type='number'
           placeholder='End Time (in Minutes)'
           className='border p-2 rounded'
-          onChange={(e) => setEndTime(Number(e.target.value)*60)}
+          onChange={(e) => setEndTime(Number(e.target.value * 60))}
         />
         <button
           className='bg-blue-500 text-white p-2 rounded'
@@ -77,13 +77,20 @@ export default function Home() {
         <div className='mt-6'>
           <YouTube
             videoId={videoId}
-            onEnd = {()=>{playerRef.current.seekTo(startTime);}}
+            onEnd={() => {
+              playerRef.current.seekTo(startTime);
+            }}
             opts={{
               playerVars: {
                 autoplay: 1,
                 controls: 1,
                 start: startTime,
                 end: endTime,
+                origin: window.location.origin,
+                modestbranding: 0, // Minimize branding
+                rel: 0,           // Prevent related videos
+                disablekb: 0,     // Disable keyboard controls
+                iv_load_policy: 3, // Disable video annotations
               },
             }}
             onReady={onPlayerReady}

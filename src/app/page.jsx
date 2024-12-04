@@ -33,21 +33,12 @@ export default function Home() {
   };
 
   const onPlayerStateChange = (event) => {
-    if (event.data === window.YT.PlayerState.PLAYING) {
-      const interval = setInterval(() => {
-        const currentTime = playerRef.current.getCurrentTime();
-        if (currentTime >= endTime) {
-          playerRef.current.seekTo(startTime); // Seek back to start time
-        }
-      }, 5000); // Check every 500ms
-      playerRef.current.loopCheckInterval = interval;
-    }
-
-    if (
-      event.data === window.YT.PlayerState.PAUSED ||
-      event.data === window.YT.PlayerState.ENDED
-    ) {
-      clearInterval(playerRef.current.loopCheckInterval); // Clear interval on pause or end
+    if (event.data === 1 && loop) { // When video is playing
+      const currentTime = playerRef.current.getCurrentTime();
+      if (currentTime >= endTime) {
+        console.log(startTime, endTime, currentTime);
+        playerRef.current.seekTo(startTime);
+      }
     }
   };
 
@@ -86,6 +77,7 @@ export default function Home() {
         <div className='mt-6'>
           <YouTube
             videoId={videoId}
+            onEnd = {()=>{playerRef.current.seekTo(startTime);}}
             opts={{
               playerVars: {
                 autoplay: 1,
